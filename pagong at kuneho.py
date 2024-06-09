@@ -18,7 +18,7 @@ canvas.pack()
 # Initialize turtle and bunny positions and speeds
 turtle_x, turtle_y = 20, 150
 bunny_x, bunny_y = 20, 250
-turtle_speed = 10
+turtle_speed = 1
 
 # Load background
 background_image_path = os.path.join(current_directory, "background.png")
