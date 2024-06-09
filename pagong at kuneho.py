@@ -9,13 +9,13 @@ current_directory = os.path.dirname(os.path.realpath(__file__))
 # Initialize main window
 root = tk.Tk()
 root.title("Ang Pagong at Ang Kuneho")
-root.resizable(False, False)  # Prevent resizing in both directions
+root.resizable(False, False) 
 canvas_width = 640
 canvas_height = 360
 canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
 canvas.pack()
 
-# Initialize turtle and bunny positions and speeds
+# Initialize turtle and bunny positions and speed
 turtle_x, turtle_y = 20, 150
 bunny_x, bunny_y = 20, 250
 turtle_speed = 1
@@ -80,11 +80,13 @@ def restart_game():
     canvas.coords(turtle, turtle_x, turtle_y)
     canvas.coords(bunny, bunny_x, bunny_y)
     canvas.itemconfig(winner_text, text='')
+    move_turtle() 
     restart_button.pack_forget() 
 
-# Create restart button (initially hidden)
+# Create restart button 
 restart_button = tk.Button(root, text="Restart Game", command=restart_game)
 restart_button.pack_forget()
+
 
 
 # Game state
