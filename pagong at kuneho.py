@@ -3,7 +3,7 @@ import random
 from PIL import Image, ImageTk
 import os
 
-# Get the current directory of the script
+# Get the current directory
 current_directory = os.path.dirname(os.path.realpath(__file__))
 
 # Initialize main window
@@ -71,7 +71,7 @@ def move_turtle():
     else:
         root.after(50, move_turtle)
 
-# Restart game function
+# Restart game
 def restart_game():
     global turtle_x, turtle_y, bunny_x, bunny_y, game_over
     turtle_x, turtle_y = 20, 150
@@ -80,17 +80,14 @@ def restart_game():
     canvas.coords(turtle, turtle_x, turtle_y)
     canvas.coords(bunny, bunny_x, bunny_y)
     canvas.itemconfig(winner_text, text='')
-    restart_button.pack_forget()  # Hide the restart button
-
-    # Hide the restart button when restarting the game
-    restart_button.pack_forget()
+    restart_button.pack_forget() 
 
 # Create restart button (initially hidden)
 restart_button = tk.Button(root, text="Restart Game", command=restart_game)
 restart_button.pack_forget()
 
 
-# Initialize a variable to track the game state
+# Game state
 game_over = False
 
 # Move bunny
