@@ -9,7 +9,7 @@ current_directory = os.path.dirname(os.path.realpath(__file__))
 # Initialize main window
 root = tk.Tk()
 root.title("Ang Pagong at Ang Kuneho")
-root.resizable(False, False) 
+root.resizable(False, False)
 canvas_width = 640
 canvas_height = 360
 canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
@@ -41,10 +41,27 @@ bunny_img_resized = bunny_img.resize((int(bunny_img.width * 2.5), int(bunny_img.
 bunny_image = ImageTk.PhotoImage(bunny_img_resized)
 bunny = canvas.create_image(bunny_x, bunny_y, image=bunny_image)
 
-# finish line
-finish_line_width = 20  
+# Load winner images
+turtle_won_image_path = os.path.join(current_directory, "turtlewon.png")
+turtle_won_img = Image.open(turtle_won_image_path)
+turtle_won_img_resized = turtle_won_img.resize((400, 200))  # Adjust size as needed
+turtle_won_image = ImageTk.PhotoImage(turtle_won_img_resized)
+
+bunny_won_image_path = os.path.join(current_directory, "bunnywon.png")
+bunny_won_img = Image.open(bunny_won_image_path)
+bunny_won_img_resized = bunny_won_img.resize((400, 200))  # Adjust size as needed
+bunny_won_image = ImageTk.PhotoImage(bunny_won_img_resized)
+
+# Load restart button image
+restart_image_path = os.path.join(current_directory, "restart.png")
+restart_img = Image.open(restart_image_path)
+restart_img_resized = restart_img.resize((100, 40))  # Adjust size as needed
+restart_image = ImageTk.PhotoImage(restart_img_resized)
+
+# Finish line
+finish_line_width = 20
 finish_line_interval = 20
-finish_line_thickness = 20 
+finish_line_thickness = 20
 
 start_y = 6 * finish_line_interval
 end_y = canvas_height - (3 * finish_line_interval)
@@ -53,13 +70,12 @@ for i in range(start_y, end_y, finish_line_interval):
     color = 'white' if (i // finish_line_interval) % 2 == 0 else 'black'
     canvas.create_line(500, i, 500, i + finish_line_width, fill=color, width=finish_line_thickness)
 
-
-winner_text = canvas.create_text(canvas_width // 2, canvas_height // 2, text='', font=('Arial', 40), anchor=tk.CENTER)
-
+# Create winner image container
+winner_image_id = canvas.create_image(canvas_width // 2, canvas_height // 2, anchor=tk.CENTER)
 
 canvas.tag_raise(turtle)
 canvas.tag_raise(bunny)
-
+canvas.tag_raise(winner_image_id)
 
 # Move turtle
 def move_turtle():
@@ -67,7 +83,8 @@ def move_turtle():
     canvas.move(turtle, turtle_speed, 0)
     turtle_x += turtle_speed
     if turtle_x >= 500:
-        canvas.itemconfig(winner_text, text='Turtle won!')
+        display_winner('turtle')
+        end_game()
     else:
         root.after(50, move_turtle)
 
@@ -79,15 +96,13 @@ def restart_game():
     game_over = False
     canvas.coords(turtle, turtle_x, turtle_y)
     canvas.coords(bunny, bunny_x, bunny_y)
-    canvas.itemconfig(winner_text, text='')
-    move_turtle() 
-    restart_button.pack_forget() 
+    canvas.itemconfig(winner_image_id, image='')  # Hide winner image
+    move_turtle()
+    restart_button.place_forget()
 
-# Create restart button 
-restart_button = tk.Button(root, text="Restart Game", command=restart_game)
-restart_button.pack_forget()
-
-
+# Create restart button
+restart_button = tk.Button(root, image=restart_image, command=restart_game, borderwidth=0, highlightthickness=0, bd=0)
+restart_button.place_forget()
 
 # Game state
 game_over = False
@@ -96,7 +111,7 @@ game_over = False
 def move_bunny(event=None):
     global bunny_x, bunny_y
     if not game_over and event:
-        direction = random.choice(["w", "a", "s", "d", "d"])
+        direction = random.choice(["a", "d", "d"])
         if direction == "w" and bunny_y > 0:
             bunny_y -= 10
         elif direction == "a" and bunny_x > 0:
@@ -110,20 +125,27 @@ def move_bunny(event=None):
 
 # Check win
 def check_win():
-    global game_over
     if bunny_x >= 500:
-        canvas.itemconfig(winner_text, text='Bunny won!')
-        game_over = True
-        restart_button.place(x=canvas_width//2.25 - restart_button.winfo_width()//2, y=canvas_height//2 + 130)  # Show the restart button centered under the winner text
+        display_winner('bunny')
+        end_game()
     elif turtle_x >= 500:
-        canvas.itemconfig(winner_text, text='Turtle won!')
-        game_over = True
-        restart_button.place(x=canvas_width//2.25 - restart_button.winfo_width()//2, y=canvas_height//2 + 130)  # Show the restart button centered under the winner text
+        display_winner('turtle')
+        end_game()
     else:
         root.after(50, move_bunny)
 
-   
+# Display winner image
+def display_winner(winner):
+    if winner == 'turtle':
+        canvas.itemconfig(winner_image_id, image=turtle_won_image)
+    elif winner == 'bunny':
+        canvas.itemconfig(winner_image_id, image=bunny_won_image)
 
+# End game
+def end_game():
+    global game_over
+    game_over = True
+    restart_button.place(x=canvas_width // 2 - restart_button.winfo_reqwidth() // 2, y=canvas_height // 2 + 130)  # Show the restart button centered under the winner image
 
 # Start the race
 move_turtle()
